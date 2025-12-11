@@ -13,8 +13,9 @@
 1. **이미지 기반 기술 검색** - AI 비전으로 사진 → 기술 및 제조기업 추천 자동화
 2. **기술 매각 중개** - 기술 이전, 지분 매각, 공동 개발 매칭
 3. **OEM/ODM 발주 시스템** - 실시간 견적 요청 및 발주
-4. **기업 데이터베이스** - 원천기술 보유 중소기업 정보 관리
-5. **다국어 지원** - 7개 국어로 글로벌 바이어와 연결
+4. **USDT 결제 시스템** ⭐ NEW - 테더(USDT) 기반 암호화폐 결제 (TRC20/ERC20/BEP20)
+5. **기업 데이터베이스** - 원천기술 보유 중소기업 정보 관리
+6. **다국어 지원** - 7개 국어로 글로벌 바이어와 연결
 
 ## 🌐 공개 URL
 
@@ -38,6 +39,14 @@
 - `GET /api/categories` - 기술 분류 조회
 - `GET /api/admin/analytics` - 분석 대시보드
 
+**⭐ USDT 결제 API (신규)**
+- `GET /api/wallets/:companyId` - 기업 USDT 지갑 주소 조회
+- `POST /api/transactions` - 트랜잭션 생성
+- `GET /api/transactions/:id` - 트랜잭션 상세 정보
+- `GET /api/transactions` - 트랜잭션 목록 (필터링)
+- `PATCH /api/transactions/:id/status` - 트랜잭션 상태 업데이트
+- `GET /api/exchange-rates` - USDT 환율 정보
+
 ## 🗄️ 데이터 아키텍처
 
 ### Cloudflare D1 Database (SQLite)
@@ -54,11 +63,22 @@
 9. **consultation_requests** - 상담 요청
 10. **user_analytics** - 사용자 행동 분석
 
+**⭐ USDT 결제 테이블 (신규)**
+11. **company_wallets** - 기업 USDT 지갑 주소 (TRC20/ERC20/BEP20)
+12. **transactions** - 결제 트랜잭션 (pending, confirming, completed, failed)
+13. **transaction_messages** - 거래 메시지/협상
+14. **escrow_accounts** - 에스크로 계좌 (플랫폼 중간 보관)
+15. **platform_fees** - 플랫폼 수수료 기록 (3% 기본)
+16. **exchange_rates** - 환율 정보 (USDT to KRW, USD, CNY, JPY, VND)
+
 ### 샘플 데이터
 - **5개 기업** 등록 (수처리, 태양광, 로봇, 금형, 센서)
 - **6개 기술 카테고리** (수처리·환경, 에너지, 자동화·로봇, 금형·기계가공, 센서·계측, 반도체·전자부품)
 - **8개 중분류** (담수화, 폐수처리, 태양광, ESS, 로봇팔, 협동로봇 등)
 - **5개 기술 매각 게시글** (기술 매각, 공동 개발, OEM/ODM, 지분 매각)
+- **⭐ 5개 USDT 지갑 주소** (TRC20 테스트넷)
+- **⭐ 2개 샘플 트랜잭션** (완료 1건, 대기 1건)
+- **⭐ 5개 환율 정보** (KRW, USD, CNY, JPY, VND)
 
 ## 🛠️ 기술 스택
 
@@ -151,6 +171,9 @@ curl http://localhost:3000/api/companies?status=approved
 - [x] 상담 요청 시스템
 - [x] 사용자 분석 (이벤트 트래킹)
 - [x] 관리자 대시보드 API
+- [x] ⭐ **USDT 결제 API** (지갑, 트랜잭션, 상태 관리)
+- [x] ⭐ **플랫폼 수수료 관리** (3% 기본)
+- [x] ⭐ **환율 정보 API** (USDT to 5개 통화)
 
 ### ✅ Frontend Pages
 - [x] 메인 페이지 (히어로, 기능 소개, 통계)
@@ -165,8 +188,9 @@ curl http://localhost:3000/api/companies?status=approved
 - [x] 데이터베이스 다국어 컬럼 (name_en, description_zh 등)
 
 ### ✅ Database
-- [x] 포괄적 스키마 설계 (10개 테이블)
+- [x] 포괄적 스키마 설계 (16개 테이블)
 - [x] 샘플 데이터 (5개 기업, 6개 카테고리, 5개 리스팅)
+- [x] ⭐ USDT 결제 시스템 (지갑, 트랜잭션, 에스크로, 수수료)
 - [x] 인덱스 최적화
 - [x] 외래키 제약조건
 
