@@ -673,18 +673,269 @@ app.get('/', (c) => {
             </footer>
         </div>
 
-        <script>
-            // Track page view
-            fetch('/api/analytics', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    event_type: 'page_view',
-                    event_data: { page: 'home', lang: '${lang}' },
-                    language: '${lang}'
-                })
-            });
-        </script>
+        <script src="/static/app.js"></script>
+    </body>
+    </html>
+  `)
+})
+
+// Search page
+app.get('/search', (c) => {
+  const lang = (c.req.query('lang') as Language) || 'ko'
+  const t = getTranslation(lang)
+  
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="${lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${t.search.title} - ${t.header.title}</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-gray-50">
+        <nav class="bg-white shadow-md">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-blue-600">${t.header.title}</h1>
+                        <p class="text-sm text-gray-600">${t.header.subtitle}</p>
+                    </div>
+                    <div class="flex gap-6">
+                        <a href="/?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.home}</a>
+                        <a href="/search?lang=${lang}" class="text-blue-600 font-semibold">${t.header.nav.search}</a>
+                        <a href="/company?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.company}</a>
+                        <a href="/marketplace?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.marketplace}</a>
+                        <a href="/admin?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.admin}</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-8">${t.search.title}</h2>
+            
+            <div id="upload-area" class="border-4 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:border-blue-500 transition mb-8">
+                <i class="fas fa-cloud-upload-alt text-6xl text-gray-400 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">${t.search.uploadTitle}</h3>
+                <p class="text-gray-600 mb-4">${t.search.uploadDesc}</p>
+                <button class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+                    ${t.search.uploadButton}
+                </button>
+                <input type="file" id="file-input" accept="image/*" multiple class="hidden">
+            </div>
+            
+            <div id="loading" class="hidden text-center py-8">
+                <i class="fas fa-spinner fa-spin text-4xl text-blue-500"></i>
+                <p class="text-gray-600 mt-4">${t.search.analyzing}</p>
+            </div>
+            
+            <div id="results"></div>
+        </div>
+
+        <script src="/static/app.js"></script>
+    </body>
+    </html>
+  `)
+})
+
+// Company registration page
+app.get('/company', (c) => {
+  const lang = (c.req.query('lang') as Language) || 'ko'
+  const t = getTranslation(lang)
+  
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="${lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${t.company.title} - ${t.header.title}</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-gray-50">
+        <nav class="bg-white shadow-md">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-blue-600">${t.header.title}</h1>
+                        <p class="text-sm text-gray-600">${t.header.subtitle}</p>
+                    </div>
+                    <div class="flex gap-6">
+                        <a href="/?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.home}</a>
+                        <a href="/search?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.search}</a>
+                        <a href="/company?lang=${lang}" class="text-blue-600 font-semibold">${t.header.nav.company}</a>
+                        <a href="/marketplace?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.marketplace}</a>
+                        <a href="/admin?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.admin}</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-8">${t.company.register}</h2>
+            
+            <form id="company-form" class="bg-white p-8 rounded-lg shadow max-w-3xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">${t.company.form.name} *</label>
+                        <input type="text" name="name" required class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">${t.company.form.email} *</label>
+                        <input type="email" name="email" required class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">${t.company.form.phone}</label>
+                        <input type="tel" name="phone" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">${t.company.form.website}</label>
+                        <input type="url" name="website" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">${t.company.form.contact}</label>
+                        <input type="text" name="contact_person" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">${t.company.form.established}</label>
+                        <input type="number" name="established_year" min="1900" max="2024" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">${t.company.form.revenue}</label>
+                        <input type="text" name="annual_revenue" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">${t.company.form.employees}</label>
+                        <input type="number" name="employee_count" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold mb-2">${t.company.form.address}</label>
+                    <input type="text" name="address" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold mb-2">${t.company.form.description}</label>
+                    <textarea name="description" rows="4" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                
+                <div class="mt-8">
+                    <button type="submit" class="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600">
+                        ${t.company.form.submit}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <script src="/static/app.js"></script>
+    </body>
+    </html>
+  `)
+})
+
+// Marketplace page
+app.get('/marketplace', (c) => {
+  const lang = (c.req.query('lang') as Language) || 'ko'
+  const t = getTranslation(lang)
+  
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="${lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${t.marketplace.title} - ${t.header.title}</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-gray-50">
+        <nav class="bg-white shadow-md">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-blue-600">${t.header.title}</h1>
+                        <p class="text-sm text-gray-600">${t.header.subtitle}</p>
+                    </div>
+                    <div class="flex gap-6">
+                        <a href="/?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.home}</a>
+                        <a href="/search?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.search}</a>
+                        <a href="/company?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.company}</a>
+                        <a href="/marketplace?lang=${lang}" class="text-blue-600 font-semibold">${t.header.nav.marketplace}</a>
+                        <a href="/admin?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.admin}</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-8">${t.marketplace.title}</h2>
+            
+            <div class="flex gap-4 mb-8">
+                <a href="/marketplace?lang=${lang}" class="px-4 py-2 bg-blue-500 text-white rounded">${t.marketplace.categories.all}</a>
+                <a href="/marketplace?type=tech_sale&lang=${lang}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">${t.marketplace.categories.forSale}</a>
+                <a href="/marketplace?type=equity_sale&lang=${lang}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">${t.marketplace.categories.equity}</a>
+                <a href="/marketplace?type=collaboration&lang=${lang}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">${t.marketplace.categories.collaboration}</a>
+                <a href="/marketplace?type=oem_odm&lang=${lang}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">${t.marketplace.categories.oem}</a>
+            </div>
+            
+            <div id="listings">
+                <p class="text-center text-gray-500">${t.common.loading}</p>
+            </div>
+        </div>
+
+        <script src="/static/app.js"></script>
+    </body>
+    </html>
+  `)
+})
+
+// Admin page
+app.get('/admin', (c) => {
+  const lang = (c.req.query('lang') as Language) || 'ko'
+  const t = getTranslation(lang)
+  
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="${lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${t.admin.title} - ${t.header.title}</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-gray-50">
+        <nav class="bg-white shadow-md">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-blue-600">${t.header.title}</h1>
+                        <p class="text-sm text-gray-600">${t.header.subtitle}</p>
+                    </div>
+                    <div class="flex gap-6">
+                        <a href="/?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.home}</a>
+                        <a href="/search?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.search}</a>
+                        <a href="/company?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.company}</a>
+                        <a href="/marketplace?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.marketplace}</a>
+                        <a href="/admin?lang=${lang}" class="text-blue-600 font-semibold">${t.header.nav.admin}</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-8">${t.admin.dashboard.title}</h2>
+            
+            <div id="admin-stats">
+                <p class="text-center text-gray-500">${t.common.loading}</p>
+            </div>
+        </div>
+
+        <script src="/static/app.js"></script>
     </body>
     </html>
   `)
