@@ -140,6 +140,33 @@ export interface Translation {
     };
   };
   
+  // 결제 (USDT)
+  payment: {
+    title: string;
+    usdt: string;
+    wallet: string;
+    amount: string;
+    network: string;
+    sendTo: string;
+    transactionHash: string;
+    status: string;
+    pending: string;
+    confirming: string;
+    completed: string;
+    failed: string;
+    payNow: string;
+    paymentProof: string;
+    uploadProof: string;
+    confirmPayment: string;
+    viewTransaction: string;
+    platformFee: string;
+    total: string;
+    buyer: string;
+    seller: string;
+    escrow: string;
+    releasePayment: string;
+  };
+  
   // 공통
   common: {
     loading: string;
@@ -290,6 +317,31 @@ export const translations: Record<Language, Translation> = {
         userBehavior: '사용자 행동',
       },
     },
+    payment: {
+      title: '결제',
+      usdt: 'USDT (테더)',
+      wallet: '지갑 주소',
+      amount: '금액',
+      network: '네트워크',
+      sendTo: '받는 주소',
+      transactionHash: '트랜잭션 해시',
+      status: '상태',
+      pending: '대기 중',
+      confirming: '확인 중',
+      completed: '완료',
+      failed: '실패',
+      payNow: '지금 결제',
+      paymentProof: '결제 증명',
+      uploadProof: '증명서 업로드',
+      confirmPayment: '결제 확인',
+      viewTransaction: '거래 내역',
+      platformFee: '플랫폼 수수료',
+      total: '총액',
+      buyer: '구매자',
+      seller: '판매자',
+      escrow: '에스크로',
+      releasePayment: '결제 승인',
+    },
     common: {
       loading: '로딩 중...',
       error: '오류가 발생했습니다',
@@ -437,6 +489,31 @@ export const translations: Record<Language, Translation> = {
         matchRate: 'Match Rate',
         userBehavior: 'User Behavior',
       },
+    },
+    payment: {
+      title: 'Payment',
+      usdt: 'USDT (Tether)',
+      wallet: 'Wallet Address',
+      amount: 'Amount',
+      network: 'Network',
+      sendTo: 'Send To',
+      transactionHash: 'Transaction Hash',
+      status: 'Status',
+      pending: 'Pending',
+      confirming: 'Confirming',
+      completed: 'Completed',
+      failed: 'Failed',
+      payNow: 'Pay Now',
+      paymentProof: 'Payment Proof',
+      uploadProof: 'Upload Proof',
+      confirmPayment: 'Confirm Payment',
+      viewTransaction: 'View Transaction',
+      platformFee: 'Platform Fee',
+      total: 'Total',
+      buyer: 'Buyer',
+      seller: 'Seller',
+      escrow: 'Escrow',
+      releasePayment: 'Release Payment',
     },
     common: {
       loading: 'Loading...',

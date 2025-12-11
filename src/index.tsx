@@ -526,6 +526,243 @@ app.patch('/api/admin/listings/:id/status', async (c) => {
   }
 })
 
+// ==================== USDT Payment API ====================
+
+// Get company wallet address
+app.get('/api/wallets/:companyId', async (c) => {
+  try {
+    const companyId = c.req.param('companyId')
+    const db = c.env.DB
+
+    const wallet = await db
+      .prepare('SELECT * FROM company_wallets WHERE company_id = ? AND is_primary = 1')
+      .bind(companyId)
+      .first()
+
+    if (!wallet) {
+      return c.json<ApiResponse>({ success: false, error: 'Wallet not found' }, 404)
+    }
+
+    return c.json<ApiResponse>({
+      success: true,
+      data: wallet,
+    })
+  } catch (error: any) {
+    return c.json<ApiResponse>({ success: false, error: error.message }, 500)
+  }
+})
+
+// Create transaction
+app.post('/api/transactions', async (c) => {
+  try {
+    const body = await c.req.json()
+    const db = c.env.DB
+
+    // Calculate platform fee (3% default)
+    const feePercentage = 3.0
+    const feeAmount = body.amount_usdt * (feePercentage / 100)
+
+    // Create transaction
+    const transaction = await db
+      .prepare(`
+        INSERT INTO transactions (
+          listing_id, buyer_id, seller_id, amount_usdt,
+          network, to_address, status, transaction_type
+        ) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)
+      `)
+      .bind(
+        body.listing_id || null,
+        body.buyer_id || null,
+        body.seller_id,
+        body.amount_usdt,
+        body.network || 'TRC20',
+        body.to_address,
+        body.transaction_type || 'tech_purchase'
+      )
+      .run()
+
+    const transactionId = transaction.meta.last_row_id
+
+    // Record platform fee
+    await db
+      .prepare(`
+        INSERT INTO platform_fees (
+          transaction_id, fee_percentage, fee_amount_usdt, status
+        ) VALUES (?, ?, ?, 'pending')
+      `)
+      .bind(transactionId, feePercentage, feeAmount)
+      .run()
+
+    return c.json<ApiResponse>({
+      success: true,
+      message: 'Transaction created',
+      data: {
+        transaction_id: transactionId,
+        amount_usdt: body.amount_usdt,
+        platform_fee: feeAmount,
+        total: body.amount_usdt + feeAmount,
+      },
+    })
+  } catch (error: any) {
+    return c.json<ApiResponse>({ success: false, error: error.message }, 500)
+  }
+})
+
+// Get transaction by ID
+app.get('/api/transactions/:id', async (c) => {
+  try {
+    const id = c.req.param('id')
+    const db = c.env.DB
+
+    const transaction = await db
+      .prepare(`
+        SELECT t.*, 
+          bc.name as buyer_name, bc.email as buyer_email,
+          sc.name as seller_name, sc.email as seller_email,
+          sw.wallet_address as seller_wallet,
+          pf.fee_amount_usdt as platform_fee
+        FROM transactions t
+        LEFT JOIN companies bc ON t.buyer_id = bc.id
+        LEFT JOIN companies sc ON t.seller_id = sc.id
+        LEFT JOIN company_wallets sw ON t.seller_id = sw.company_id AND sw.is_primary = 1
+        LEFT JOIN platform_fees pf ON t.id = pf.transaction_id
+        WHERE t.id = ?
+      `)
+      .bind(id)
+      .first()
+
+    if (!transaction) {
+      return c.json<ApiResponse>({ success: false, error: 'Transaction not found' }, 404)
+    }
+
+    return c.json<ApiResponse>({
+      success: true,
+      data: transaction,
+    })
+  } catch (error: any) {
+    return c.json<ApiResponse>({ success: false, error: error.message }, 500)
+  }
+})
+
+// Update transaction status (confirm payment)
+app.patch('/api/transactions/:id/status', async (c) => {
+  try {
+    const id = c.req.param('id')
+    const { status, transaction_hash, payment_proof_url } = await c.req.json()
+    const db = c.env.DB
+
+    if (!['pending', 'confirming', 'completed', 'failed', 'refunded'].includes(status)) {
+      return c.json<ApiResponse>({ success: false, error: 'Invalid status' }, 400)
+    }
+
+    const updates: string[] = ['status = ?', 'updated_at = CURRENT_TIMESTAMP']
+    const params: any[] = [status]
+
+    if (transaction_hash) {
+      updates.push('transaction_hash = ?')
+      params.push(transaction_hash)
+    }
+
+    if (payment_proof_url) {
+      updates.push('payment_proof_url = ?')
+      params.push(payment_proof_url)
+    }
+
+    if (status === 'completed') {
+      updates.push('completed_at = CURRENT_TIMESTAMP')
+      
+      // Update platform fee status
+      await db
+        .prepare('UPDATE platform_fees SET status = ?, collected_at = CURRENT_TIMESTAMP WHERE transaction_id = ?')
+        .bind('collected', id)
+        .run()
+    }
+
+    params.push(id)
+
+    await db
+      .prepare(`UPDATE transactions SET ${updates.join(', ')} WHERE id = ?`)
+      .bind(...params)
+      .run()
+
+    return c.json<ApiResponse>({
+      success: true,
+      message: 'Transaction updated',
+    })
+  } catch (error: any) {
+    return c.json<ApiResponse>({ success: false, error: error.message }, 500)
+  }
+})
+
+// Get all transactions (with filters)
+app.get('/api/transactions', async (c) => {
+  try {
+    const { buyer_id, seller_id, status, limit = '20', offset = '0' } = c.req.query()
+    const db = c.env.DB
+
+    let query = `
+      SELECT t.*, 
+        bc.name as buyer_name,
+        sc.name as seller_name,
+        pf.fee_amount_usdt as platform_fee
+      FROM transactions t
+      LEFT JOIN companies bc ON t.buyer_id = bc.id
+      LEFT JOIN companies sc ON t.seller_id = sc.id
+      LEFT JOIN platform_fees pf ON t.id = pf.transaction_id
+      WHERE 1=1
+    `
+    const params: any[] = []
+
+    if (buyer_id) {
+      query += ' AND t.buyer_id = ?'
+      params.push(buyer_id)
+    }
+    if (seller_id) {
+      query += ' AND t.seller_id = ?'
+      params.push(seller_id)
+    }
+    if (status) {
+      query += ' AND t.status = ?'
+      params.push(status)
+    }
+
+    query += ' ORDER BY t.created_at DESC LIMIT ? OFFSET ?'
+    params.push(parseInt(limit), parseInt(offset))
+
+    const result = await db.prepare(query).bind(...params).all()
+
+    return c.json<ApiResponse>({
+      success: true,
+      data: result.results,
+    })
+  } catch (error: any) {
+    return c.json<ApiResponse>({ success: false, error: error.message }, 500)
+  }
+})
+
+// Get exchange rates
+app.get('/api/exchange-rates', async (c) => {
+  try {
+    const db = c.env.DB
+
+    const rates = await db
+      .prepare(`
+        SELECT * FROM (
+          SELECT *, ROW_NUMBER() OVER (PARTITION BY currency_code ORDER BY created_at DESC) as rn
+          FROM exchange_rates
+        ) WHERE rn = 1
+      `)
+      .all()
+
+    return c.json<ApiResponse>({
+      success: true,
+      data: rates.results,
+    })
+  } catch (error: any) {
+    return c.json<ApiResponse>({ success: false, error: error.message }, 500)
+  }
+})
+
 // ==================== Frontend Routes ====================
 
 // Main page
