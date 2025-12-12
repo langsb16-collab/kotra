@@ -19,14 +19,23 @@
 
 ## 🌐 공개 URL
 
-**현재 개발 서버**: https://3000-ifyu8j5u4pqnfy4tmli0w-ad490db5.sandbox.novita.ai
+### 🚀 프로덕션 배포 (Cloudflare Pages)
+- **커스텀 도메인**: https://iqherb.net (SSL 인증서 발급 중)
+- **www 도메인**: https://www.iqherb.net (SSL 인증서 발급 중)
+- **Pages 도메인**: https://iqherb-techfinder.pages.dev
+
+**배포 정보**:
+- **플랫폼**: Cloudflare Pages
+- **상태**: ✅ 배포 완료 (2025-12-12)
+- **D1 Database**: 연결됨 (`iqherb-production`)
+- **GitHub**: https://github.com/langsb16-collab/kotra
 
 ### 주요 페이지
-- **메인 페이지**: https://3000-ifyu8j5u4pqnfy4tmli0w-ad490db5.sandbox.novita.ai/?lang=ko
-- **기술 검색**: https://3000-ifyu8j5u4pqnfy4tmli0w-ad490db5.sandbox.novita.ai/search?lang=ko
-- **기업 등록**: https://3000-ifyu8j5u4pqnfy4tmli0w-ad490db5.sandbox.novita.ai/company?lang=ko
-- **기술 거래소**: https://3000-ifyu8j5u4pqnfy4tmli0w-ad490db5.sandbox.novita.ai/marketplace?lang=ko
-- **관리자**: https://3000-ifyu8j5u4pqnfy4tmli0w-ad490db5.sandbox.novita.ai/admin?lang=ko
+- **메인 페이지**: https://iqherb-techfinder.pages.dev/?lang=ko
+- **기술 검색**: https://iqherb-techfinder.pages.dev/search?lang=ko
+- **기업 등록**: https://iqherb-techfinder.pages.dev/company?lang=ko
+- **기술 거래소**: https://iqherb-techfinder.pages.dev/marketplace?lang=ko
+- **관리자**: https://iqherb-techfinder.pages.dev/admin?lang=ko
 
 ### API 엔드포인트
 - `GET /api/health` - 헬스 체크
