@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "webapp",
+  "name": "iqherb-techfinder",
   "compatibility_date": "2025-12-11",
   "pages_build_output_dir": "./dist",
   "compatibility_flags": [
@@ -9,8 +9,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "webapp-production",
-      "database_id": "local-db-for-development"
+      "database_name": "iqherb-production",
+      "database_id": "914d50d4-0144-448f-b0a5-b525fbdb6e6e"
     }
   ]
 }
