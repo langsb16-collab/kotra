@@ -775,142 +775,207 @@ app.get('/', (c) => {
     <html lang="${lang}">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>${t.header.title} - ${t.header.subtitle}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+        <style>
+          * { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif; }
+        </style>
     </head>
-    <body class="bg-gray-50">
+    <body class="bg-gradient-to-br from-indigo-50 via-white to-purple-50">
         <div id="app">
-            <nav class="bg-white shadow-md">
-                <div class="container mx-auto px-4 py-4">
+            <!-- Compact Header -->
+            <nav class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+                <div class="mx-auto px-3 py-2">
                     <div class="flex justify-between items-center">
-                        <div>
-                            <h1 class="text-2xl font-bold text-blue-600">${t.header.title}</h1>
-                            <p class="text-sm text-gray-600">${t.header.subtitle}</p>
-                        </div>
-                        <div class="flex gap-6">
-                            <a href="/?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.home}</a>
-                            <a href="/search?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.search}</a>
-                            <a href="/company?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.company}</a>
-                            <a href="/marketplace?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.marketplace}</a>
-                            <a href="/admin?lang=${lang}" class="text-gray-700 hover:text-blue-600">${t.header.nav.admin}</a>
-                        </div>
-                        <div class="flex gap-2">
-                            <a href="/?lang=ko" class="px-2 py-1 ${lang === 'ko' ? 'bg-blue-500 text-white' : 'text-gray-600'} rounded">한</a>
-                            <a href="/?lang=en" class="px-2 py-1 ${lang === 'en' ? 'bg-blue-500 text-white' : 'text-gray-600'} rounded">EN</a>
-                            <a href="/?lang=zh" class="px-2 py-1 ${lang === 'zh' ? 'bg-blue-500 text-white' : 'text-gray-600'} rounded">中</a>
-                            <a href="/?lang=ja" class="px-2 py-1 ${lang === 'ja' ? 'bg-blue-500 text-white' : 'text-gray-600'} rounded">日</a>
-                            <a href="/?lang=vi" class="px-2 py-1 ${lang === 'vi' ? 'bg-blue-500 text-white' : 'text-gray-600'} rounded">VI</a>
-                            <a href="/?lang=mn" class="px-2 py-1 ${lang === 'mn' ? 'bg-blue-500 text-white' : 'text-gray-600'} rounded">MN</a>
-                            <a href="/?lang=ru" class="px-2 py-1 ${lang === 'ru' ? 'bg-blue-500 text-white' : 'text-gray-600'} rounded">RU</a>
+                        <a href="/?lang=${lang}" class="flex items-center gap-2">
+                            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 w-8 h-8 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-search text-white text-sm"></i>
+                            </div>
+                            <span class="text-base font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">TechFinder</span>
+                        </a>
+                        
+                        <!-- Mobile Nav + Language -->
+                        <div class="flex items-center gap-2">
+                            <!-- Nav Icons (Mobile) -->
+                            <div class="flex gap-1">
+                                <a href="/?lang=${lang}" class="p-2 text-indigo-600"><i class="fas fa-home text-sm"></i></a>
+                                <a href="/search?lang=${lang}" class="p-2 text-gray-600 hover:text-indigo-600"><i class="fas fa-camera text-sm"></i></a>
+                                <a href="/marketplace?lang=${lang}" class="p-2 text-gray-600 hover:text-indigo-600"><i class="fas fa-store text-sm"></i></a>
+                            </div>
+                            
+                            <!-- Language Selector (Prominent) -->
+                            <div class="relative">
+                                <button onclick="document.getElementById('langMenu').classList.toggle('hidden')" 
+                                        class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg hover:shadow-xl transition-all flex items-center gap-1">
+                                    <i class="fas fa-globe"></i>
+                                    <span>${lang.toUpperCase()}</span>
+                                    <i class="fas fa-chevron-down text-[10px]"></i>
+                                </button>
+                                <div id="langMenu" class="hidden absolute right-0 mt-2 bg-white rounded-xl shadow-2xl p-2 min-w-[140px] z-50">
+                                    <a href="/?lang=ko" class="block px-3 py-2 rounded-lg ${lang === 'ko' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇰🇷 한국어</a>
+                                    <a href="/?lang=en" class="block px-3 py-2 rounded-lg ${lang === 'en' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇺🇸 English</a>
+                                    <a href="/?lang=zh" class="block px-3 py-2 rounded-lg ${lang === 'zh' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇨🇳 中文</a>
+                                    <a href="/?lang=ja" class="block px-3 py-2 rounded-lg ${lang === 'ja' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇯🇵 日本語</a>
+                                    <a href="/?lang=vi" class="block px-3 py-2 rounded-lg ${lang === 'vi' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇻🇳 Tiếng Việt</a>
+                                    <a href="/?lang=mn" class="block px-3 py-2 rounded-lg ${lang === 'mn' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇲🇳 Монгол</a>
+                                    <a href="/?lang=ru" class="block px-3 py-2 rounded-lg ${lang === 'ru' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇷🇺 Русский</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </nav>
 
-            <!-- Hero Section -->
-            <section class="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-20">
-                <div class="container mx-auto px-4 text-center">
-                    <h2 class="text-4xl md:text-5xl font-bold mb-6">${t.home.hero.title}</h2>
-                    <p class="text-xl mb-8">${t.home.hero.subtitle}</p>
-                    <a href="/search?lang=${lang}" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block">
-                        <i class="fas fa-camera mr-2"></i>${t.home.hero.uploadButton}
-                    </a>
+            <!-- Compact Hero Section -->
+            <section class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white py-12 px-4">
+                <div class="max-w-2xl mx-auto text-center">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl">
+                        <div class="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-camera text-3xl"></i>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-bold mb-3">${t.home.hero.title}</h2>
+                        <p class="text-sm md:text-base mb-6 text-white/90">${t.home.hero.subtitle}</p>
+                        <a href="/search?lang=${lang}" class="bg-white text-indigo-600 px-6 py-3 rounded-full font-bold hover:bg-gray-100 inline-flex items-center gap-2 shadow-xl hover:shadow-2xl transition-all">
+                            <i class="fas fa-camera"></i>
+                            <span>${t.home.hero.uploadButton}</span>
+                        </a>
+                    </div>
                 </div>
             </section>
 
-            <!-- How It Works -->
-            <section class="py-16">
-                <div class="container mx-auto px-4">
-                    <h3 class="text-3xl font-bold text-center mb-12">${t.home.howItWorks.title}</h3>
-                    <div class="grid md:grid-cols-3 gap-8">
-                        <div class="text-center">
-                            <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-camera text-3xl text-blue-600"></i>
+            <!-- Compact How It Works -->
+            <section class="py-8 px-4">
+                <div class="max-w-2xl mx-auto">
+                    <h3 class="text-xl font-bold text-center mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">${t.home.howItWorks.title}</h3>
+                    <div class="space-y-3">
+                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all flex items-center gap-4">
+                            <div class="bg-gradient-to-br from-indigo-500 to-purple-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-camera text-xl text-white"></i>
                             </div>
-                            <h4 class="text-xl font-bold mb-2">${t.home.howItWorks.step1.title}</h4>
-                            <p class="text-gray-600">${t.home.howItWorks.step1.desc}</p>
+                            <div>
+                                <h4 class="text-sm font-bold mb-1">${t.home.howItWorks.step1.title}</h4>
+                                <p class="text-xs text-gray-600">${t.home.howItWorks.step1.desc}</p>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-brain text-3xl text-blue-600"></i>
+                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all flex items-center gap-4">
+                            <div class="bg-gradient-to-br from-purple-500 to-pink-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-brain text-xl text-white"></i>
                             </div>
-                            <h4 class="text-xl font-bold mb-2">${t.home.howItWorks.step2.title}</h4>
-                            <p class="text-gray-600">${t.home.howItWorks.step2.desc}</p>
+                            <div>
+                                <h4 class="text-sm font-bold mb-1">${t.home.howItWorks.step2.title}</h4>
+                                <p class="text-xs text-gray-600">${t.home.howItWorks.step2.desc}</p>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-handshake text-3xl text-blue-600"></i>
+                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all flex items-center gap-4">
+                            <div class="bg-gradient-to-br from-pink-500 to-rose-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-handshake text-xl text-white"></i>
                             </div>
-                            <h4 class="text-xl font-bold mb-2">${t.home.howItWorks.step3.title}</h4>
-                            <p class="text-gray-600">${t.home.howItWorks.step3.desc}</p>
+                            <div>
+                                <h4 class="text-sm font-bold mb-1">${t.home.howItWorks.step3.title}</h4>
+                                <p class="text-xs text-gray-600">${t.home.howItWorks.step3.desc}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Features -->
-            <section class="bg-gray-100 py-16">
-                <div class="container mx-auto px-4">
-                    <h3 class="text-3xl font-bold text-center mb-12">${t.home.features.title}</h3>
-                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-6 rounded-lg shadow">
-                            <i class="fas fa-image text-3xl text-blue-600 mb-4"></i>
-                            <h4 class="text-lg font-bold mb-2">${t.home.features.feature1.title}</h4>
-                            <p class="text-gray-600">${t.home.features.feature1.desc}</p>
+            <!-- Compact Features Grid -->
+            <section class="py-8 px-4 bg-gradient-to-br from-indigo-50 to-purple-50">
+                <div class="max-w-2xl mx-auto">
+                    <h3 class="text-xl font-bold text-center mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">${t.home.features.title}</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
+                            <div class="bg-gradient-to-br from-blue-500 to-cyan-500 w-10 h-10 rounded-xl flex items-center justify-center mb-3">
+                                <i class="fas fa-image text-lg text-white"></i>
+                            </div>
+                            <h4 class="text-sm font-bold mb-1">${t.home.features.feature1.title}</h4>
+                            <p class="text-xs text-gray-600 leading-snug">${t.home.features.feature1.desc}</p>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow">
-                            <i class="fas fa-exchange-alt text-3xl text-blue-600 mb-4"></i>
-                            <h4 class="text-lg font-bold mb-2">${t.home.features.feature2.title}</h4>
-                            <p class="text-gray-600">${t.home.features.feature2.desc}</p>
+                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
+                            <div class="bg-gradient-to-br from-emerald-500 to-teal-500 w-10 h-10 rounded-xl flex items-center justify-center mb-3">
+                                <i class="fas fa-exchange-alt text-lg text-white"></i>
+                            </div>
+                            <h4 class="text-sm font-bold mb-1">${t.home.features.feature2.title}</h4>
+                            <p class="text-xs text-gray-600 leading-snug">${t.home.features.feature2.desc}</p>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow">
-                            <i class="fas fa-industry text-3xl text-blue-600 mb-4"></i>
-                            <h4 class="text-lg font-bold mb-2">${t.home.features.feature3.title}</h4>
-                            <p class="text-gray-600">${t.home.features.feature3.desc}</p>
+                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
+                            <div class="bg-gradient-to-br from-orange-500 to-amber-500 w-10 h-10 rounded-xl flex items-center justify-center mb-3">
+                                <i class="fas fa-industry text-lg text-white"></i>
+                            </div>
+                            <h4 class="text-sm font-bold mb-1">${t.home.features.feature3.title}</h4>
+                            <p class="text-xs text-gray-600 leading-snug">${t.home.features.feature3.desc}</p>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow">
-                            <i class="fas fa-globe text-3xl text-blue-600 mb-4"></i>
-                            <h4 class="text-lg font-bold mb-2">${t.home.features.feature4.title}</h4>
-                            <p class="text-gray-600">${t.home.features.feature4.desc}</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Stats -->
-            <section class="py-16">
-                <div class="container mx-auto px-4">
-                    <div class="grid md:grid-cols-4 gap-6 text-center">
-                        <div>
-                            <div class="text-4xl font-bold text-blue-600 mb-2">150+</div>
-                            <div class="text-gray-600">${t.home.stats.companies}</div>
-                        </div>
-                        <div>
-                            <div class="text-4xl font-bold text-blue-600 mb-2">500+</div>
-                            <div class="text-gray-600">${t.home.stats.technologies}</div>
-                        </div>
-                        <div>
-                            <div class="text-4xl font-bold text-blue-600 mb-2">1,200+</div>
-                            <div class="text-gray-600">${t.home.stats.matches}</div>
-                        </div>
-                        <div>
-                            <div class="text-4xl font-bold text-blue-600 mb-2">15+</div>
-                            <div class="text-gray-600">${t.home.stats.countries}</div>
+                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
+                            <div class="bg-gradient-to-br from-purple-500 to-fuchsia-500 w-10 h-10 rounded-xl flex items-center justify-center mb-3">
+                                <i class="fas fa-globe text-lg text-white"></i>
+                            </div>
+                            <h4 class="text-sm font-bold mb-1">${t.home.features.feature4.title}</h4>
+                            <p class="text-xs text-gray-600 leading-snug">${t.home.features.feature4.desc}</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <footer class="bg-gray-800 text-white py-8">
-                <div class="container mx-auto px-4 text-center">
-                    <p>&copy; 2024 ${t.header.title}. All rights reserved.</p>
+            <!-- Compact Stats -->
+            <section class="py-8 px-4">
+                <div class="max-w-2xl mx-auto">
+                    <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl p-6 shadow-2xl">
+                        <div class="grid grid-cols-2 gap-4 text-center text-white">
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                <div class="text-3xl font-bold mb-1">150+</div>
+                                <div class="text-xs opacity-90">${t.home.stats.companies}</div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                <div class="text-3xl font-bold mb-1">500+</div>
+                                <div class="text-xs opacity-90">${t.home.stats.technologies}</div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                <div class="text-3xl font-bold mb-1">1,200+</div>
+                                <div class="text-xs opacity-90">${t.home.stats.matches}</div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                <div class="text-3xl font-bold mb-1">15+</div>
+                                <div class="text-xs opacity-90">${t.home.stats.countries}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mobile-Friendly Footer -->
+            <footer class="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-6 px-4">
+                <div class="max-w-2xl mx-auto text-center">
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 w-8 h-8 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-search text-white text-sm"></i>
+                        </div>
+                        <span class="text-lg font-bold">${t.header.title}</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-4">${t.header.subtitle}</p>
+                    <div class="flex justify-center gap-4 mb-4">
+                        <a href="/?lang=${lang}" class="text-gray-400 hover:text-white text-xs">${t.header.nav.home}</a>
+                        <a href="/search?lang=${lang}" class="text-gray-400 hover:text-white text-xs">${t.header.nav.search}</a>
+                        <a href="/marketplace?lang=${lang}" class="text-gray-400 hover:text-white text-xs">${t.header.nav.marketplace}</a>
+                        <a href="/admin?lang=${lang}" class="text-gray-400 hover:text-white text-xs">${t.header.nav.admin}</a>
+                    </div>
+                    <p class="text-xs text-gray-500">&copy; 2024 ${t.header.title}. All rights reserved.</p>
                 </div>
             </footer>
         </div>
 
         <script src="/static/app.js"></script>
+        <script>
+          // Close language menu when clicking outside
+          document.addEventListener('click', (e) => {
+            const langMenu = document.getElementById('langMenu');
+            if (!e.target.closest('.relative') && langMenu) {
+              langMenu.classList.add('hidden');
+            }
+          });
+        </script>
     </body>
     </html>
   `)
