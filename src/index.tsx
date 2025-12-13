@@ -780,48 +780,82 @@ app.get('/', (c) => {
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <style>
-          * { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif; }
+          * { 
+            -webkit-tap-highlight-color: transparent; 
+            scroll-behavior: smooth;
+            box-sizing: border-box;
+          }
+          body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+          @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+          }
+          .animate-slide-up { animation: slideUp 0.6s ease-out; }
+          .animate-fade-in { animation: fadeIn 0.8s ease-out; }
+          .animate-float { animation: float 3s ease-in-out infinite; }
+          .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+          }
+          .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
         </style>
     </head>
-    <body class="bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-        <div id="app">
-            <!-- Compact Header -->
-            <nav class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
-                <div class="mx-auto px-3 py-2">
+    <body class="bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 min-h-screen">
+        <div id="app" class="min-h-screen">
+            <!-- Ultra-Compact Header (30px height) -->
+            <nav class="glass border-b border-violet-100 sticky top-0 z-50 shadow-sm">
+                <div class="mx-auto px-3 py-1.5">
                     <div class="flex justify-between items-center">
-                        <a href="/?lang=${lang}" class="flex items-center gap-2">
-                            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 w-8 h-8 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-search text-white text-sm"></i>
+                        <a href="/?lang=${lang}" class="flex items-center gap-1.5">
+                            <div class="bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-500 w-7 h-7 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-sparkles text-white text-xs"></i>
                             </div>
-                            <span class="text-base font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">TechFinder</span>
+                            <span class="text-sm font-black gradient-text">TechFinder</span>
                         </a>
                         
                         <!-- Mobile Nav + Language -->
-                        <div class="flex items-center gap-2">
-                            <!-- Nav Icons (Mobile) -->
-                            <div class="flex gap-1">
-                                <a href="/?lang=${lang}" class="p-2 text-indigo-600"><i class="fas fa-home text-sm"></i></a>
-                                <a href="/search?lang=${lang}" class="p-2 text-gray-600 hover:text-indigo-600"><i class="fas fa-camera text-sm"></i></a>
-                                <a href="/marketplace?lang=${lang}" class="p-2 text-gray-600 hover:text-indigo-600"><i class="fas fa-store text-sm"></i></a>
+                        <div class="flex items-center gap-1.5">
+                            <!-- Nav Icons (Ultra Compact) -->
+                            <div class="flex gap-0.5">
+                                <a href="/?lang=${lang}" class="p-1.5 text-violet-600 bg-violet-50 rounded-lg"><i class="fas fa-home text-xs"></i></a>
+                                <a href="/search?lang=${lang}" class="p-1.5 text-gray-500 hover:text-fuchsia-600 hover:bg-fuchsia-50 rounded-lg transition-all"><i class="fas fa-camera text-xs"></i></a>
+                                <a href="/marketplace?lang=${lang}" class="p-1.5 text-gray-500 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-all"><i class="fas fa-store text-xs"></i></a>
                             </div>
                             
-                            <!-- Language Selector (Prominent) -->
+                            <!-- Language Selector (Eye-catching) -->
                             <div class="relative">
                                 <button onclick="document.getElementById('langMenu').classList.toggle('hidden')" 
-                                        class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg hover:shadow-xl transition-all flex items-center gap-1">
-                                    <i class="fas fa-globe"></i>
+                                        class="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 text-white px-2.5 py-1 rounded-full text-[11px] font-black shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-1 animate-pulse-slow">
+                                    <i class="fas fa-globe text-xs"></i>
                                     <span>${lang.toUpperCase()}</span>
-                                    <i class="fas fa-chevron-down text-[10px]"></i>
+                                    <i class="fas fa-chevron-down text-[8px]"></i>
                                 </button>
-                                <div id="langMenu" class="hidden absolute right-0 mt-2 bg-white rounded-xl shadow-2xl p-2 min-w-[140px] z-50">
-                                    <a href="/?lang=ko" class="block px-3 py-2 rounded-lg ${lang === 'ko' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇰🇷 한국어</a>
-                                    <a href="/?lang=en" class="block px-3 py-2 rounded-lg ${lang === 'en' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇺🇸 English</a>
-                                    <a href="/?lang=zh" class="block px-3 py-2 rounded-lg ${lang === 'zh' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇨🇳 中文</a>
-                                    <a href="/?lang=ja" class="block px-3 py-2 rounded-lg ${lang === 'ja' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇯🇵 日本語</a>
-                                    <a href="/?lang=vi" class="block px-3 py-2 rounded-lg ${lang === 'vi' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇻🇳 Tiếng Việt</a>
-                                    <a href="/?lang=mn" class="block px-3 py-2 rounded-lg ${lang === 'mn' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇲🇳 Монгол</a>
-                                    <a href="/?lang=ru" class="block px-3 py-2 rounded-lg ${lang === 'ru' ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-700 hover:bg-gray-100'}">🇷🇺 Русский</a>
+                                <div id="langMenu" class="hidden absolute right-0 mt-2 glass border border-violet-100 rounded-2xl shadow-2xl p-1.5 min-w-[140px] z-50 animate-slide-up">
+                                    <a href="/?lang=ko" class="block px-3 py-2 rounded-xl text-sm ${lang === 'ko' ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-bold shadow-lg' : 'text-gray-700 hover:bg-violet-50 transition-all'}">🇰🇷 한국어</a>
+                                    <a href="/?lang=en" class="block px-3 py-2 rounded-xl text-sm ${lang === 'en' ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-bold shadow-lg' : 'text-gray-700 hover:bg-violet-50 transition-all'}">🇺🇸 English</a>
+                                    <a href="/?lang=zh" class="block px-3 py-2 rounded-xl text-sm ${lang === 'zh' ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-bold shadow-lg' : 'text-gray-700 hover:bg-violet-50 transition-all'}">🇨🇳 中文</a>
+                                    <a href="/?lang=ja" class="block px-3 py-2 rounded-xl text-sm ${lang === 'ja' ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-bold shadow-lg' : 'text-gray-700 hover:bg-violet-50 transition-all'}">🇯🇵 日本語</a>
+                                    <a href="/?lang=vi" class="block px-3 py-2 rounded-xl text-sm ${lang === 'vi' ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-bold shadow-lg' : 'text-gray-700 hover:bg-violet-50 transition-all'}">🇻🇳 Tiếng Việt</a>
+                                    <a href="/?lang=mn" class="block px-3 py-2 rounded-xl text-sm ${lang === 'mn' ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-bold shadow-lg' : 'text-gray-700 hover:bg-violet-50 transition-all'}">🇲🇳 Монгол</a>
+                                    <a href="/?lang=ru" class="block px-3 py-2 rounded-xl text-sm ${lang === 'ru' ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-bold shadow-lg' : 'text-gray-700 hover:bg-violet-50 transition-all'}">🇷🇺 Русский</a>
                                 </div>
                             </div>
                         </div>
@@ -829,139 +863,148 @@ app.get('/', (c) => {
                 </div>
             </nav>
 
-            <!-- Compact Hero Section -->
-            <section class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white py-12 px-4">
-                <div class="max-w-2xl mx-auto text-center">
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl">
-                        <div class="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-camera text-3xl"></i>
+            <!-- Ultra Modern Hero Section -->
+            <section class="relative bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-600 text-white py-10 px-4 overflow-hidden">
+                <!-- Animated Background Elements -->
+                <div class="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl animate-float"></div>
+                <div class="absolute bottom-10 right-10 w-40 h-40 bg-fuchsia-300/20 rounded-full blur-3xl animate-float" style="animation-delay: 1s;"></div>
+                
+                <div class="max-w-xl mx-auto text-center relative z-10 animate-fade-in">
+                    <div class="glass border border-white/20 rounded-3xl p-6 shadow-2xl">
+                        <div class="bg-gradient-to-br from-white/30 to-white/10 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl animate-float">
+                            <i class="fas fa-sparkles text-2xl"></i>
                         </div>
-                        <h2 class="text-2xl md:text-3xl font-bold mb-3">${t.home.hero.title}</h2>
-                        <p class="text-sm md:text-base mb-6 text-white/90">${t.home.hero.subtitle}</p>
-                        <a href="/search?lang=${lang}" class="bg-white text-indigo-600 px-6 py-3 rounded-full font-bold hover:bg-gray-100 inline-flex items-center gap-2 shadow-xl hover:shadow-2xl transition-all">
-                            <i class="fas fa-camera"></i>
-                            <span>${t.home.hero.uploadButton}</span>
+                        <h2 class="text-2xl font-black mb-2 leading-tight">${t.home.hero.title}</h2>
+                        <p class="text-sm mb-5 text-white/90 leading-relaxed">${t.home.hero.subtitle}</p>
+                        <a href="/search?lang=${lang}" class="bg-white text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-pink-600 px-7 py-3.5 rounded-full font-black inline-flex items-center gap-2.5 shadow-2xl hover:shadow-pink-500/50 hover:scale-105 transition-all duration-300 relative overflow-hidden group">
+                            <span class="absolute inset-0 bg-gradient-to-r from-violet-600 to-pink-600 opacity-0 group-hover:opacity-10 transition-opacity"></span>
+                            <i class="fas fa-camera text-violet-600"></i>
+                            <span class="bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">${t.home.hero.uploadButton}</span>
+                            <i class="fas fa-arrow-right text-violet-600 text-xs"></i>
                         </a>
                     </div>
                 </div>
             </section>
 
-            <!-- Compact How It Works -->
-            <section class="py-8 px-4">
-                <div class="max-w-2xl mx-auto">
-                    <h3 class="text-xl font-bold text-center mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">${t.home.howItWorks.title}</h3>
-                    <div class="space-y-3">
-                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all flex items-center gap-4">
-                            <div class="bg-gradient-to-br from-indigo-500 to-purple-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-camera text-xl text-white"></i>
+            <!-- How It Works - Modern Cards -->
+            <section class="py-6 px-4 animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="max-w-xl mx-auto">
+                    <h3 class="text-lg font-black text-center mb-5 gradient-text">${t.home.howItWorks.title}</h3>
+                    <div class="space-y-2.5">
+                        <div class="glass border border-violet-100 rounded-2xl p-3.5 shadow-lg hover:shadow-violet-200 hover:scale-[1.02] transition-all duration-300 flex items-center gap-3 group">
+                            <div class="bg-gradient-to-br from-violet-500 to-purple-500 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-camera text-lg text-white"></i>
                             </div>
-                            <div>
-                                <h4 class="text-sm font-bold mb-1">${t.home.howItWorks.step1.title}</h4>
-                                <p class="text-xs text-gray-600">${t.home.howItWorks.step1.desc}</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all flex items-center gap-4">
-                            <div class="bg-gradient-to-br from-purple-500 to-pink-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-brain text-xl text-white"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold mb-1">${t.home.howItWorks.step2.title}</h4>
-                                <p class="text-xs text-gray-600">${t.home.howItWorks.step2.desc}</p>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-gray-800 mb-0.5">${t.home.howItWorks.step1.title}</h4>
+                                <p class="text-xs text-gray-600 leading-relaxed">${t.home.howItWorks.step1.desc}</p>
                             </div>
                         </div>
-                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all flex items-center gap-4">
-                            <div class="bg-gradient-to-br from-pink-500 to-rose-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-handshake text-xl text-white"></i>
+                        <div class="glass border border-fuchsia-100 rounded-2xl p-3.5 shadow-lg hover:shadow-fuchsia-200 hover:scale-[1.02] transition-all duration-300 flex items-center gap-3 group">
+                            <div class="bg-gradient-to-br from-fuchsia-500 to-pink-500 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-brain text-lg text-white"></i>
                             </div>
-                            <div>
-                                <h4 class="text-sm font-bold mb-1">${t.home.howItWorks.step3.title}</h4>
-                                <p class="text-xs text-gray-600">${t.home.howItWorks.step3.desc}</p>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-gray-800 mb-0.5">${t.home.howItWorks.step2.title}</h4>
+                                <p class="text-xs text-gray-600 leading-relaxed">${t.home.howItWorks.step2.desc}</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Compact Features Grid -->
-            <section class="py-8 px-4 bg-gradient-to-br from-indigo-50 to-purple-50">
-                <div class="max-w-2xl mx-auto">
-                    <h3 class="text-xl font-bold text-center mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">${t.home.features.title}</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                            <div class="bg-gradient-to-br from-blue-500 to-cyan-500 w-10 h-10 rounded-xl flex items-center justify-center mb-3">
-                                <i class="fas fa-image text-lg text-white"></i>
+                        <div class="glass border border-pink-100 rounded-2xl p-3.5 shadow-lg hover:shadow-pink-200 hover:scale-[1.02] transition-all duration-300 flex items-center gap-3 group">
+                            <div class="bg-gradient-to-br from-pink-500 to-rose-500 w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-handshake text-lg text-white"></i>
                             </div>
-                            <h4 class="text-sm font-bold mb-1">${t.home.features.feature1.title}</h4>
-                            <p class="text-xs text-gray-600 leading-snug">${t.home.features.feature1.desc}</p>
-                        </div>
-                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                            <div class="bg-gradient-to-br from-emerald-500 to-teal-500 w-10 h-10 rounded-xl flex items-center justify-center mb-3">
-                                <i class="fas fa-exchange-alt text-lg text-white"></i>
-                            </div>
-                            <h4 class="text-sm font-bold mb-1">${t.home.features.feature2.title}</h4>
-                            <p class="text-xs text-gray-600 leading-snug">${t.home.features.feature2.desc}</p>
-                        </div>
-                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                            <div class="bg-gradient-to-br from-orange-500 to-amber-500 w-10 h-10 rounded-xl flex items-center justify-center mb-3">
-                                <i class="fas fa-industry text-lg text-white"></i>
-                            </div>
-                            <h4 class="text-sm font-bold mb-1">${t.home.features.feature3.title}</h4>
-                            <p class="text-xs text-gray-600 leading-snug">${t.home.features.feature3.desc}</p>
-                        </div>
-                        <div class="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                            <div class="bg-gradient-to-br from-purple-500 to-fuchsia-500 w-10 h-10 rounded-xl flex items-center justify-center mb-3">
-                                <i class="fas fa-globe text-lg text-white"></i>
-                            </div>
-                            <h4 class="text-sm font-bold mb-1">${t.home.features.feature4.title}</h4>
-                            <p class="text-xs text-gray-600 leading-snug">${t.home.features.feature4.desc}</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Compact Stats -->
-            <section class="py-8 px-4">
-                <div class="max-w-2xl mx-auto">
-                    <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl p-6 shadow-2xl">
-                        <div class="grid grid-cols-2 gap-4 text-center text-white">
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                <div class="text-3xl font-bold mb-1">150+</div>
-                                <div class="text-xs opacity-90">${t.home.stats.companies}</div>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                <div class="text-3xl font-bold mb-1">500+</div>
-                                <div class="text-xs opacity-90">${t.home.stats.technologies}</div>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                <div class="text-3xl font-bold mb-1">1,200+</div>
-                                <div class="text-xs opacity-90">${t.home.stats.matches}</div>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                <div class="text-3xl font-bold mb-1">15+</div>
-                                <div class="text-xs opacity-90">${t.home.stats.countries}</div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-gray-800 mb-0.5">${t.home.howItWorks.step3.title}</h4>
+                                <p class="text-xs text-gray-600 leading-relaxed">${t.home.howItWorks.step3.desc}</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Mobile-Friendly Footer -->
-            <footer class="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-6 px-4">
-                <div class="max-w-2xl mx-auto text-center">
-                    <div class="flex items-center justify-center gap-2 mb-3">
-                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 w-8 h-8 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-search text-white text-sm"></i>
+            <!-- Features - Modern 2x2 Grid -->
+            <section class="py-6 px-4 animate-slide-up" style="animation-delay: 0.4s;">
+                <div class="max-w-xl mx-auto">
+                    <h3 class="text-lg font-black text-center mb-5 gradient-text">${t.home.features.title}</h3>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div class="glass border border-blue-100 rounded-2xl p-3.5 shadow-lg hover:shadow-blue-200 hover:scale-105 transition-all duration-300 group">
+                            <div class="bg-gradient-to-br from-blue-500 to-cyan-500 w-9 h-9 rounded-xl flex items-center justify-center mb-2.5 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all">
+                                <i class="fas fa-image text-base text-white"></i>
+                            </div>
+                            <h4 class="text-xs font-bold mb-1 text-gray-800">${t.home.features.feature1.title}</h4>
+                            <p class="text-[10px] text-gray-600 leading-snug">${t.home.features.feature1.desc}</p>
                         </div>
-                        <span class="text-lg font-bold">${t.header.title}</span>
+                        <div class="glass border border-emerald-100 rounded-2xl p-3.5 shadow-lg hover:shadow-emerald-200 hover:scale-105 transition-all duration-300 group">
+                            <div class="bg-gradient-to-br from-emerald-500 to-teal-500 w-9 h-9 rounded-xl flex items-center justify-center mb-2.5 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all">
+                                <i class="fas fa-exchange-alt text-base text-white"></i>
+                            </div>
+                            <h4 class="text-xs font-bold mb-1 text-gray-800">${t.home.features.feature2.title}</h4>
+                            <p class="text-[10px] text-gray-600 leading-snug">${t.home.features.feature2.desc}</p>
+                        </div>
+                        <div class="glass border border-orange-100 rounded-2xl p-3.5 shadow-lg hover:shadow-orange-200 hover:scale-105 transition-all duration-300 group">
+                            <div class="bg-gradient-to-br from-orange-500 to-amber-500 w-9 h-9 rounded-xl flex items-center justify-center mb-2.5 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all">
+                                <i class="fas fa-industry text-base text-white"></i>
+                            </div>
+                            <h4 class="text-xs font-bold mb-1 text-gray-800">${t.home.features.feature3.title}</h4>
+                            <p class="text-[10px] text-gray-600 leading-snug">${t.home.features.feature3.desc}</p>
+                        </div>
+                        <div class="glass border border-fuchsia-100 rounded-2xl p-3.5 shadow-lg hover:shadow-fuchsia-200 hover:scale-105 transition-all duration-300 group">
+                            <div class="bg-gradient-to-br from-fuchsia-500 to-pink-500 w-9 h-9 rounded-xl flex items-center justify-center mb-2.5 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all">
+                                <i class="fas fa-globe text-base text-white"></i>
+                            </div>
+                            <h4 class="text-xs font-bold mb-1 text-gray-800">${t.home.features.feature4.title}</h4>
+                            <p class="text-[10px] text-gray-600 leading-snug">${t.home.features.feature4.desc}</p>
+                        </div>
                     </div>
-                    <p class="text-xs text-gray-400 mb-4">${t.header.subtitle}</p>
-                    <div class="flex justify-center gap-4 mb-4">
-                        <a href="/?lang=${lang}" class="text-gray-400 hover:text-white text-xs">${t.header.nav.home}</a>
-                        <a href="/search?lang=${lang}" class="text-gray-400 hover:text-white text-xs">${t.header.nav.search}</a>
-                        <a href="/marketplace?lang=${lang}" class="text-gray-400 hover:text-white text-xs">${t.header.nav.marketplace}</a>
-                        <a href="/admin?lang=${lang}" class="text-gray-400 hover:text-white text-xs">${t.header.nav.admin}</a>
+                </div>
+            </section>
+
+            <!-- Stats - Glassmorphism Cards -->
+            <section class="py-6 px-4 animate-slide-up" style="animation-delay: 0.6s;">
+                <div class="max-w-xl mx-auto">
+                    <div class="relative bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-600 rounded-3xl p-5 shadow-2xl overflow-hidden">
+                        <!-- Decorative Elements -->
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+                        <div class="absolute bottom-0 left-0 w-32 h-32 bg-fuchsia-300/20 rounded-full blur-2xl"></div>
+                        
+                        <div class="relative z-10 grid grid-cols-2 gap-2.5 text-center text-white">
+                            <div class="glass border border-white/20 rounded-2xl p-3.5 hover:scale-105 transition-transform">
+                                <div class="text-2xl font-black mb-0.5 bg-white/90 bg-clip-text text-transparent">150+</div>
+                                <div class="text-[10px] opacity-90 font-medium">${t.home.stats.companies}</div>
+                            </div>
+                            <div class="glass border border-white/20 rounded-2xl p-3.5 hover:scale-105 transition-transform">
+                                <div class="text-2xl font-black mb-0.5 bg-white/90 bg-clip-text text-transparent">500+</div>
+                                <div class="text-[10px] opacity-90 font-medium">${t.home.stats.technologies}</div>
+                            </div>
+                            <div class="glass border border-white/20 rounded-2xl p-3.5 hover:scale-105 transition-transform">
+                                <div class="text-2xl font-black mb-0.5 bg-white/90 bg-clip-text text-transparent">1,200+</div>
+                                <div class="text-[10px] opacity-90 font-medium">${t.home.stats.matches}</div>
+                            </div>
+                            <div class="glass border border-white/20 rounded-2xl p-3.5 hover:scale-105 transition-transform">
+                                <div class="text-2xl font-black mb-0.5 bg-white/90 bg-clip-text text-transparent">15+</div>
+                                <div class="text-[10px] opacity-90 font-medium">${t.home.stats.countries}</div>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-xs text-gray-500">&copy; 2024 ${t.header.title}. All rights reserved.</p>
+                </div>
+            </section>
+
+            <!-- Modern Footer -->
+            <footer class="mt-6 bg-gradient-to-br from-gray-900 via-violet-900 to-fuchsia-900 text-white py-5 px-4">
+                <div class="max-w-xl mx-auto text-center">
+                    <div class="flex items-center justify-center gap-2 mb-2.5">
+                        <div class="bg-gradient-to-br from-violet-500 to-fuchsia-500 w-7 h-7 rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-sparkles text-white text-xs"></i>
+                        </div>
+                        <span class="text-base font-black">${t.header.title}</span>
+                    </div>
+                    <p class="text-[10px] text-white/70 mb-3 leading-relaxed">${t.header.subtitle}</p>
+                    <div class="flex justify-center gap-3 mb-3">
+                        <a href="/?lang=${lang}" class="glass border border-white/10 px-3 py-1.5 rounded-lg text-[10px] hover:bg-white/10 transition-all">${t.header.nav.home}</a>
+                        <a href="/search?lang=${lang}" class="glass border border-white/10 px-3 py-1.5 rounded-lg text-[10px] hover:bg-white/10 transition-all">${t.header.nav.search}</a>
+                        <a href="/marketplace?lang=${lang}" class="glass border border-white/10 px-3 py-1.5 rounded-lg text-[10px] hover:bg-white/10 transition-all">${t.header.nav.marketplace}</a>
+                    </div>
+                    <p class="text-[9px] text-white/50 font-medium">&copy; 2024 ${t.header.title}. All rights reserved.</p>
                 </div>
             </footer>
         </div>
@@ -971,9 +1014,21 @@ app.get('/', (c) => {
           // Close language menu when clicking outside
           document.addEventListener('click', (e) => {
             const langMenu = document.getElementById('langMenu');
-            if (!e.target.closest('.relative') && langMenu) {
+            const button = e.target.closest('button');
+            if (!button && langMenu && !langMenu.classList.contains('hidden')) {
               langMenu.classList.add('hidden');
             }
+          });
+          
+          // Smooth scroll for all anchor links
+          document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+              e.preventDefault();
+              const target = document.querySelector(this.getAttribute('href'));
+              if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            });
           });
         </script>
     </body>
